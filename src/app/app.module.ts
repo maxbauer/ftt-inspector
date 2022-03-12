@@ -2,6 +2,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // NG Translate
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -11,7 +12,6 @@ import { CoreModule } from './core/core.module';
 import { HomeModule } from './home/home.module';
 import { ResultModule } from './result/result.module';
 import { SharedModule } from './shared/shared.module';
-import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 
@@ -36,7 +36,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         deps: [HttpClient]
       }
     }),
-    FlexLayoutModule
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

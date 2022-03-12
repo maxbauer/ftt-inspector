@@ -9,8 +9,7 @@ import { Router } from '@angular/router';
 export class ResultComponent implements OnInit {
 
   isFinished = true;
-  searchTerm: String;
-
+  textToAnalyze: string;
 
   constructor(private router: Router) { }
 
@@ -26,11 +25,25 @@ export class ResultComponent implements OnInit {
     // throw new Error('Method not implemented.');
   }
 
-  public applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    const searchTerm = filterValue.trim().toLowerCase();
 
+  mark(event: Event) {
+    const markValue = (event.target as HTMLInputElement).value;
+    this.clearIt()
+    if (markValue.length > 2) {
+      let c = new RegExp(markValue, "ig")
+      const main = document.getElementById('text-block');
+      main.innerHTML = main.innerHTML.replace(c, "<mark>" + markValue + "</mark>");
+    }
   }
+
+  clearIt() {
+    let b = new RegExp("mark>", "ig");
+    const main = document.getElementById('text-block');
+    main.innerHTML = main.innerHTML.replace(b, "wbr>");
+  }
+
+
+
 
 
 }

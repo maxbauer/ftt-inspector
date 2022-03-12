@@ -1,7 +1,47 @@
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import "~bootstrap/scss/bootstrap";
+@import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+// @import "theme.scss";
+
+
+
+@font-face {
+  font-family: "Material Icons";
+  font-style: normal;
+  font-weight: 400;
+  src: url(../node_modules/material-design-icons/iconfont/MaterialIcons-Regular.eot);
+  src: local("Material Icons"), local("MaterialIcons-Regular"),
+    url(../node_modules/material-design-icons/iconfont/MaterialIcons-Regular.woff2)
+      format("woff2"),
+    url(../node_modules/material-design-icons/iconfont/MaterialIcons-Regular.woff)
+      format("woff"),
+    url(../node_modules/material-design-icons/iconfont/MaterialIcons-Regular.ttf)
+      format("truetype");
+}
+
+.material-icons {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+}
+
 
 /* You can add global styles to this file, and also import other style files */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
 
@@ -9,14 +49,10 @@ html, body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-
 .container {
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-
 }
-
