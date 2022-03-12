@@ -73,4 +73,21 @@ export class ResultComponent implements OnInit {
     const main = document.getElementById('text-block');
     main.innerHTML = main.innerHTML.replace(b, "wbr>");
   }
+
+  exportFile() {
+    this.saveData(this.textToAnalyze, "export.txt");
+  }
+
+
+  saveData = (function () {
+    const a = document.createElement("a");
+    return function (data, fileName) {
+      const blob = new Blob([data], { type: "octet/stream" });
+      const url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    };
+  }());
 }
