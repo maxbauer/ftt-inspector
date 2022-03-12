@@ -1,21 +1,39 @@
 <div class="container">
 
   <div *ngIf="isFinished;else showSpinner" style="height: 100%; width: 100%;">
-    <mat-grid-list cols="4" rowHeight="50%">
-      <mat-grid-tile [colspan]=4 class="header">
 
-        <mat-form-field appearance="outline">
+
+
+    <div class="row">
+      <div class="col-2">
+        <a routerLink="../">
+          <button mat-icon-button>
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+        </a>
+      </div>
+      <div class="col-10">
+        <mat-form-field appearance="outline" style="width:80%;">
           <mat-icon matSuffix>search</mat-icon>
           <mat-label>Search</mat-label>
           <input matInput type="text" (keyup)="applyFilter($event)">
         </mat-form-field>
+      </div>
+    </div>
 
-      </mat-grid-tile>
-      <mat-grid-tile [colspan]=3 class="content">Content</mat-grid-tile>
-      <mat-grid-tile [colspan]=1 class="buttons">
+    <div class="row">
+
+      <div class="col-9" style="height: 100%;">
         <button mat-raised-button>Export</button>
-      </mat-grid-tile>
-    </mat-grid-list>
+      </div>
+
+      <div class="col-3" style="height: 100%;">
+        <button mat-raised-button>Export</button>
+      </div>
+
+    </div>
+
+
 
   </div>
 
