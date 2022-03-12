@@ -7,26 +7,39 @@ import { Router } from '@angular/router';
   styleUrls: ['./result.component.scss']
 })
 export class ResultComponent implements OnInit {
-
-  isFinished = true;
+  
+  fileToAnalyze: Blob;
   searchTerm: String;
-
+  
   config = {
     lang:"eng",
     oem: 1,
     psm: 3,
   };
+  isFinished = true;
   tesseract = require("node-tesseract-ocr");
 
 
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-    const fileToAnalyze = history.state.fileToAnalyze as File;
-    this.analyzeFile(fileToAnalyze);
+    this.fileToAnalyze = history.state.fileToAnalyze as File;
+    var promise = new Promise(this.getBuffer);
+    promise.then( function (data){
+      this.analyzeFile(data);
+    })
   }
 
-  async analyzeFile(fileToAnalyze: File) {
+  async getBuffer(resolve){
+    var reader = new FileReader();
+    reader.readAsArrayBuffer(this.fileToAnalyze);  
+    reader.onload = function(){
+      var arrayBuffer = reader.result;
+      resolve(arrayBuffer)
+    }
+  }
+
+  async analyzeFile(fileToAnalyze: Buffer) {
     console.log("[INFO] Start Analyzing file...")
     try{
       const text = await this.tesseract.recognize(File, this.config);
@@ -42,6 +55,5 @@ export class ResultComponent implements OnInit {
     const searchTerm = filterValue.trim().toLowerCase();
 
   }
-
 
 }
