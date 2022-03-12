@@ -1,13 +1,28 @@
 <div class="container">
-  <h1 class="title">
-    Analyzing...
-  </h1>
 
-  <div *ngIf="isFinished;else showSpinner">
+  <div *ngIf="isFinished;else showSpinner" style="height: 100%; width: 100%;">
+    <mat-grid-list cols="4" rowHeight="50%">
+      <mat-grid-tile [colspan]=4 class="header">
+
+        <mat-form-field appearance="outline">
+          <mat-icon matSuffix>search</mat-icon>
+          <mat-label>Search</mat-label>
+          <input matInput type="text" (keyup)="applyFilter($event)">
+        </mat-form-field>
+
+      </mat-grid-tile>
+      <mat-grid-tile [colspan]=3 class="content">Content</mat-grid-tile>
+      <mat-grid-tile [colspan]=1 class="buttons">
+        <button mat-raised-button>Export</button>
+      </mat-grid-tile>
+    </mat-grid-list>
 
   </div>
 
   <ng-template #showSpinner>
+    <h1 class="title">
+      Analyzing...
+    </h1>
     <mat-spinner></mat-spinner>
   </ng-template>
 
