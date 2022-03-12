@@ -6,4 +6,10 @@ import { Injectable } from '@angular/core';
 export class PdfToImageService {
 
   constructor() { }
+
+
+  public convertPdfToImage(imageFile: File) {
+
+  }
+
 }

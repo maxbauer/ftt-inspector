@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { HomeModule } from './home/home.module';
 import { ResultModule } from './result/result.module';
+import { PdfToImageService } from './services/pdf-to-image.service';
 import { SharedModule } from './shared/shared.module';
 
 
@@ -38,7 +39,10 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     }),
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [
+    PdfToImageService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
