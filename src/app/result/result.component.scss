@@ -1,4 +1,19 @@
 :host {
 }
 
+.text-block-container {
+  height: 100%;
+}
 
+#text-block {
+  background-color: rgb(250, 250, 250);
+  border-radius: 5px;
+  padding: 20px;
+}
+
+mark,
+.mark {
+  padding: 0.2em;
+  border-radius: 2px;
+  background-color: #584f19;
+}

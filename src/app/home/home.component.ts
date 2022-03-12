@@ -1,21 +1,47 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ElectronService } from '../core/services';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
 
   selectedFile: File;
   fileUrl: string;
   fileName: string;
 
-  constructor(private router: Router) { }
+  dropZone: HTMLElement;
+
+  constructor(private router: Router, private electronServie: ElectronService) { }
 
   ngOnInit(): void {
     console.log('HomeComponent INIT');
+
+  }
+
+  ngAfterViewInit() {
+    this.dropZone = document.getElementById('dnd-handler');
+
+    this.dropZone.addEventListener("dragover", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+    });
+
+    this.dropZone.addEventListener("drop", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      console.log(e);
+      const files = e.dataTransfer.files;
+      for (let i = 0; i < files.length; i++) {
+        const file = files.item(i);
+        this.selectedFile = file;
+        this.fileName = file.name;
+      }
+    });
   }
 
 
@@ -33,7 +59,7 @@ export class HomeComponent implements OnInit {
 
 
   startFTTInspector() {
-    this.router.navigate(['result'], {  state: { fileToAnalyze: this.selectedFile} });
+    this.router.navigate(['result'], { state: { fileToAnalyze: this.selectedFile } });
   }
 
 }

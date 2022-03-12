@@ -10,6 +10,7 @@ export class ResultComponent implements OnInit {
   
   fileToAnalyze: Blob;
   searchTerm: String;
+  textToAnalyze: string;
   
   config = {
     lang:"eng",
@@ -18,7 +19,6 @@ export class ResultComponent implements OnInit {
   };
   isFinished = true;
   tesseract = require("node-tesseract-ocr");
-
 
   constructor(private router: Router) { }
 
@@ -50,10 +50,28 @@ export class ResultComponent implements OnInit {
     }
   }
 
-  public applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    const searchTerm = filterValue.trim().toLowerCase();
 
+  mark(event: Event) {
+    const markValue = (event.target as HTMLInputElement).value;
+    this.clearIt()
+    if (markValue.length > 2) {
+      let c = new RegExp(markValue, "ig")
+      const main = document.getElementById('text-block');
+      main.innerHTML = main.innerHTML.replace(c, "<mark>" + markValue + "</mark>");
+    }
   }
 
+  clearIt() {
+    let b = new RegExp("mark>", "ig");
+    const main = document.getElementById('text-block');
+    main.innerHTML = main.innerHTML.replace(b, "wbr>");
+  }
+
+<<<<<<< HEAD
+=======
+
+
+
+
+>>>>>>> master
 }
