@@ -1,3 +1,44 @@
 :host {
-  
+}
+
+.uploaded-image {
+  margin: auto;
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  height: 200px;
+}
+
+.image-preview {
+  text-align: center;
+
+  img {
+    max-width: 200px;
+    max-height: 200px;
+  }
+}
+
+input[type="file"] {
+  display: none;
+}
+
+label {
+  width: 80%;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 30px;
+}
+
+label:hover {
+  border: 2px ridge #292a2a;
+}
+
+a {
+  text-decoration: underline !important;
+}
+
+.select-new-image-text {
+  margin: auto;
 }

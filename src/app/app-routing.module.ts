@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeRoutingModule } from './home/home-routing.module';
+import { ResultRoutingModule } from './result/result-routing.module';
 import { PageNotFoundComponent } from './shared/components';
 
-import { HomeRoutingModule } from './home/home-routing.module';
-import { DetailRoutingModule } from './detail/detail-routing.module';
+const resultModule = () => import('./result/result.module').then(x => x.ResultModule);
+
 
 const routes: Routes = [
   {
@@ -11,6 +13,7 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   },
+  // { path: 'result', loadChildren: resultModule },
   {
     path: '**',
     component: PageNotFoundComponent
@@ -19,9 +22,9 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
+    RouterModule.forRoot(routes),
     HomeRoutingModule,
-    DetailRoutingModule
+    ResultRoutingModule
   ],
   exports: [RouterModule]
 })
