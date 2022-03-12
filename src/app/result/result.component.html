@@ -1,0 +1,14 @@
+<div class="container">
+  <h1 class="title">
+    Analyzing...
+  </h1>
+
+  <div *ngIf="isFinished;else showSpinner">
+
+  </div>
+
+  <ng-template #showSpinner>
+    <mat-spinner></mat-spinner>
+  </ng-template>
+
+</div>

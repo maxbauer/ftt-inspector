@@ -1,7 +1,29 @@
 <div class="container">
-  <h1 class="title">
-    {{ 'PAGES.HOME.TITLE' | translate }}
+
+
+  <h1>
+    Drag & Drop image or file
   </h1>
 
-  <a routerLink="/detail">{{ 'PAGES.HOME.GO_TO_DETAIL' | translate }}</a>
+  <label id="dnd-handler">
+
+    <div class="image-preview">
+      <img *ngIf="fileUrl" src="{{imageURL}}">
+      <img *ngIf="!fileUrl" src="../../assets/images/pdf.png">
+    </div>
+    <input type="file" (change)="onFileSelect($event)" accept=".pdf|image/*">
+    <div class="row">
+      <div class="col-6">
+        <!-- <button mat-icon-button color="primary" type="button" title="Edit image" (click)="editImage()">
+          <mat-icon>edit</mat-icon>
+        </button> -->
+      </div>
+      <div class="col-6 select-new-image-text">
+        <a>{{fileName}}</a>
+      </div>
+    </div>
+  </label>
+
+  <button mat-button color="primary" [disabled]="!fileName" (click)="startFTTInspector()">Start FTT Inspector</button>
+
 </div>
