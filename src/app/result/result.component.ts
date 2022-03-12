@@ -58,6 +58,8 @@ export class ResultComponent implements OnInit {
       const resized = tf.cast(smallImg, 'float32');
       const t4d = tf.tensor4d(Array.from(resized.dataSync()), [1,64,64,3]);
       const result = await this.model.predict(t4d).data();
+      console.log("[INFO] Model Prediction: ", result);
+      return result
     }
     catch(error){
       console.log("[ERROR] During prediction: ", error.message)
