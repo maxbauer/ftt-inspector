@@ -10,7 +10,7 @@
     <div class="image-preview">
       <img src="../../assets/images/pdf.png">
     </div>
-    <input type="file" (change)="onFileSelect($event)" accept=".pdf|image/*">
+    <input type="file" webkitdirectory="true" (change)="onFileSelect($event)" accept=".pdf|image/*">
     <div class="row">
       <div class="col-6">
         <!-- <button mat-icon-button color="primary" type="button" title="Edit image" (click)="editImage()">

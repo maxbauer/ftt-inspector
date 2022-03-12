@@ -11,6 +11,13 @@ export class ResultComponent implements OnInit {
   isFinished = true;
   searchTerm: String;
 
+  config = {
+    lang:"eng",
+    oem: 1,
+    psm: 3,
+  };
+  tesseract = require("node-tesseract-ocr");
+
 
   constructor(private router: Router) { }
 
@@ -19,11 +26,15 @@ export class ResultComponent implements OnInit {
     this.analyzeFile(fileToAnalyze);
   }
 
-  analyzeFile(fileToAnalyze: File) {
-
-
-
-    // throw new Error('Method not implemented.');
+  async analyzeFile(fileToAnalyze: File) {
+    console.log("[INFO] Start Analyzing file...")
+    try{
+      const text = await this.tesseract.recognize(File, this.config);
+      console.log("Result: ", text);
+    }
+    catch(error){
+      console.log(error.message)
+    }
   }
 
   public applyFilter(event: Event): void {
