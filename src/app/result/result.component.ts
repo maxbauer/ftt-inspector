@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import * as tf from '@tensorflow/tfjs';
 
 @Component({
   selector: 'app-result',
@@ -11,6 +12,8 @@ export class ResultComponent implements OnInit {
   fileToAnalyze: Blob;
   searchTerm: String;
   textToAnalyze: string;
+
+  model: any;
   
   config = {
     lang:"eng",
@@ -32,15 +35,7 @@ export class ResultComponent implements OnInit {
     })
   }
 
-  async getBuffer(resolve){
-    var reader = new FileReader();
-    reader.readAsArrayBuffer(this.fileToAnalyze);  
-    reader.onload = () => {
-      var arrayBuffer = reader.result;
-      resolve(arrayBuffer)
-    }
-  }
-
+  
   async analyzeFile(fileToAnalyze) {
     console.log("[INFO] Start Analyzing file...")
     try{
@@ -57,6 +52,39 @@ export class ResultComponent implements OnInit {
     }
   }
 
+  async predict_image(fileToAnalyze){
+    try{
+      const smallImg = tf.image.resizeBilinear(fileToAnalyze, [64, 64]);
+      const resized = tf.cast(smallImg, 'float32');
+      const t4d = tf.tensor4d(Array.from(resized.dataSync()), [1,64,64,3]);
+      const result = await this.model.predict(t4d).data();
+    }
+    catch(error){
+      console.log("[ERROR] During prediction: ", error.message)
+    }
+    
+  }
+  
+  async getBuffer(resolve){
+    var reader = new FileReader();
+    reader.readAsArrayBuffer(this.fileToAnalyze);  
+    reader.onload = () => {
+      var arrayBuffer = reader.result;
+      resolve(arrayBuffer)
+    }
+  }
+
+async loadModel() {
+  try{
+    console.log("[INFO] Loading the tf model ...")
+    const modelURL = 'assets/selective_data_model/model.json';
+    this.model = tf.loadLayersModel(modelURL);
+    console.log("[Successfully loaded model.]")
+  }
+  catch(error){
+    console.log("[ERROR] Loading the model: ", error.message)
+  }
+}
 
   mark(event: Event) {
     const markValue = (event.target as HTMLInputElement).value;
