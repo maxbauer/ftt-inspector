@@ -17,15 +17,17 @@ export class ResultComponent implements OnInit {
     oem: 1,
     psm: 3,
   };
-  isFinished = true;
+  isFinished = false;
   tesseract = require("node-tesseract-ocr");
 
   constructor(private router: Router) { }
 
   ngOnInit(): void {
     this.fileToAnalyze = history.state.fileToAnalyze as File;
-    var promise = new Promise(this.getBuffer);
-    promise.then( function (data){
+    var promise = new Promise((resolve, reject) => {
+      this.getBuffer(resolve);
+    });
+    promise.then((data) => {
       this.analyzeFile(data);
     })
   }
@@ -33,20 +35,25 @@ export class ResultComponent implements OnInit {
   async getBuffer(resolve){
     var reader = new FileReader();
     reader.readAsArrayBuffer(this.fileToAnalyze);  
-    reader.onload = function(){
+    reader.onload = () => {
       var arrayBuffer = reader.result;
       resolve(arrayBuffer)
     }
   }
 
-  async analyzeFile(fileToAnalyze: Buffer) {
+  async analyzeFile(fileToAnalyze) {
     console.log("[INFO] Start Analyzing file...")
     try{
-      const text = await this.tesseract.recognize(File, this.config);
+      var uint8Array = new Uint8Array(fileToAnalyze);
+      const text = await this.tesseract.recognize(uint8Array, this.config);
       console.log("Result: ", text);
+      this.textToAnalyze = text
     }
     catch(error){
-      console.log(error.message)
+      console.log("[ERR]", error.message)
+    }
+    finally{
+      this.isFinished = true;
     }
   }
 
