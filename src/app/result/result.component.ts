@@ -66,12 +66,4 @@ export class ResultComponent implements OnInit {
     const main = document.getElementById('text-block');
     main.innerHTML = main.innerHTML.replace(b, "wbr>");
   }
-
-<<<<<<< HEAD
-=======
-
-
-
-
->>>>>>> master
 }
