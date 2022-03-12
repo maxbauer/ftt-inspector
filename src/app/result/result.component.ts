@@ -8,7 +8,9 @@ import { Router } from '@angular/router';
 })
 export class ResultComponent implements OnInit {
 
-  isFinished = false;
+  isFinished = true;
+  searchTerm: String;
+
 
   constructor(private router: Router) { }
 
@@ -20,8 +22,15 @@ export class ResultComponent implements OnInit {
   analyzeFile(fileToAnalyze: File) {
 
 
-    
+
     // throw new Error('Method not implemented.');
   }
+
+  public applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    const searchTerm = filterValue.trim().toLowerCase();
+
+  }
+
 
 }

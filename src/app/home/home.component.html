@@ -8,8 +8,7 @@
   <label id="dnd-handler">
 
     <div class="image-preview">
-      <img *ngIf="fileUrl" src="{{imageURL}}">
-      <img *ngIf="!fileUrl" src="../../assets/images/pdf.png">
+      <img src="../../assets/images/pdf.png">
     </div>
     <input type="file" (change)="onFileSelect($event)" accept=".pdf|image/*">
     <div class="row">
@@ -24,6 +23,6 @@
     </div>
   </label>
 
-  <button mat-button color="primary" [disabled]="!fileName" (click)="startFTTInspector()">Start FTT Inspector</button>
+  <button mat-raised-button color="primary" [disabled]="!fileName" (click)="startFTTInspector()">Start FTT Inspector</button>
 
 </div>
