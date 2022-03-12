@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import * as Tesseract from 'tesseract.js';
+import { createScheduler, createWorker } from 'tesseract.js';
+import { PdfToImageService } from '../services/pdf-to-image.service';
 
 @Component({
   selector: 'app-result',
@@ -7,53 +10,56 @@ import { Router } from '@angular/router';
   styleUrls: ['./result.component.scss']
 })
 export class ResultComponent implements OnInit {
-  
+
   fileToAnalyze: Blob;
   searchTerm: String;
   textToAnalyze: string;
-  
+
   config = {
-    lang:"eng",
+    lang: "eng",
     oem: 1,
     psm: 3,
   };
   isFinished = false;
-  tesseract = require("node-tesseract-ocr");
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private convetService: PdfToImageService) { }
 
   ngOnInit(): void {
-    this.fileToAnalyze = history.state.fileToAnalyze as File;
-    var promise = new Promise((resolve, reject) => {
-      this.getBuffer(resolve);
-    });
-    promise.then((data) => {
-      this.analyzeFile(data);
-    })
+    const fileToAnalyze = history.state.fileToAnalyze as File;
+
+    if (fileToAnalyze.type === 'application/pdf') {
+      this.convetService.convertPdfToImage(fileToAnalyze);
+    }
+
+    this.analyzeFile2(fileToAnalyze);
   }
 
-  async getBuffer(resolve){
-    var reader = new FileReader();
-    reader.readAsArrayBuffer(this.fileToAnalyze);  
-    reader.onload = () => {
-      var arrayBuffer = reader.result;
-      resolve(arrayBuffer)
-    }
+  async analyzeFile2(file: File) {
+
+
+    const t0 = performance.now();
+    const scheduler = createScheduler();
+    await this.createWorkers(1, scheduler);
+    const t1 = performance.now();
+    console.log(t1 - t0, 'milliseconds for worker creation');
+    const { data: { text } } = await scheduler.addJob('recognize', file);
+    const t2 = performance.now();
+    console.log(t2 - t1, 'milliseconds for text recognition');
+
+    this.textToAnalyze = text
+    this.isFinished = true;
+    await scheduler.terminate();
   }
 
-  async analyzeFile(fileToAnalyze) {
-    console.log("[INFO] Start Analyzing file...")
-    try{
-      var uint8Array = new Uint8Array(fileToAnalyze);
-      const text = await this.tesseract.recognize(uint8Array, this.config);
-      console.log("Result: ", text);
-      this.textToAnalyze = text
-    }
-    catch(error){
-      console.log("[ERR]", error.message)
-    }
-    finally{
-      this.isFinished = true;
+
+  private async createWorkers(numberOfWorkers: number, scheduler: Tesseract.Scheduler) {
+    for (let index = 0; index < numberOfWorkers; index++) {
+      const worker = createWorker();
+      await worker.load();
+      await worker.loadLanguage('deu');
+      await worker.initialize('deu', Tesseract.OEM.LSTM_ONLY);
+      worker.setParameters({ tessedit_pageseg_mode: Tesseract.PSM.AUTO });
+      scheduler.addWorker(worker);
     }
   }
 
