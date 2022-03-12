@@ -1,50 +1,63 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as Tesseract from 'tesseract.js';
 import { createScheduler, createWorker } from 'tesseract.js';
+import { OCROnImageService } from '../services/ocr-model-predict-on-image.service copy';
 import { PdfToImageService } from '../services/pdf-to-image.service';
+
 
 @Component({
   selector: 'app-result',
   templateUrl: './result.component.html',
   styleUrls: ['./result.component.scss']
 })
-export class ResultComponent implements OnInit {
+export class ResultComponent implements OnInit, AfterViewInit {
 
   fileToAnalyze: Blob;
   searchTerm: String;
   textToAnalyze: string;
+
+
 
   config = {
     lang: "eng",
     oem: 1,
     psm: 3,
   };
-  isFinished = false;
+  isFinished = true;
 
-  constructor(private router: Router, private convetService: PdfToImageService) { }
+  constructor(private router: Router, private ocrService: OCROnImageService, private convertService: PdfToImageService) { }
+
+
+  ngAfterViewInit(): void {
+    const previewElement = document.getElementById("previewImg") as HTMLImageElement;
+    console.log("[DEBUG] filereader: ", document.getElementById('text-block'));
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(this.fileToAnalyze);
+    fileReader.onload = () => {
+      let result = fileReader.result;
+      console.log("[DEBUG] filereader: ", previewElement);
+      previewElement.src = result.toString();
+      let predictionResult = this.ocrService.predictOnImage(previewElement);
+    }
+  }
+
+
+
 
   ngOnInit(): void {
     const fileToAnalyze = history.state.fileToAnalyze as File;
 
     if (fileToAnalyze.type === 'application/pdf') {
-      this.convetService.convertPdfToImage(fileToAnalyze);
+      this.convertService.convertPdfToImage(fileToAnalyze);
     }
-
-    this.analyzeFile2(fileToAnalyze);
+    this.analyzeImage(fileToAnalyze);
   }
 
-  async analyzeFile2(file: File) {
-
-
-    const t0 = performance.now();
+  async analyzeImage(file: File) {
     const scheduler = createScheduler();
     await this.createWorkers(1, scheduler);
-    const t1 = performance.now();
-    console.log(t1 - t0, 'milliseconds for worker creation');
     const { data: { text } } = await scheduler.addJob('recognize', file);
-    const t2 = performance.now();
-    console.log(t2 - t1, 'milliseconds for text recognition');
 
     this.textToAnalyze = text
     this.isFinished = true;
@@ -62,6 +75,17 @@ export class ResultComponent implements OnInit {
       scheduler.addWorker(worker);
     }
   }
+
+
+  async getBuffer(resolve) {
+    var reader = new FileReader();
+    reader.readAsArrayBuffer(this.fileToAnalyze);
+    reader.onload = () => {
+      var arrayBuffer = reader.result;
+      resolve(arrayBuffer)
+    }
+  }
+
 
 
   mark(event: Event) {
