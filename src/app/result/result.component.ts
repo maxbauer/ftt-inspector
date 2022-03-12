@@ -1,92 +1,60 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import * as tf from '@tensorflow/tfjs';
+import { FileWatcherEventKind } from 'typescript/lib/tsserverlibrary';
+import { OCROnImageService } from '../services/ocr-model-predict-on-image.service copy';
 
 @Component({
   selector: 'app-result',
   templateUrl: './result.component.html',
   styleUrls: ['./result.component.scss']
 })
-export class ResultComponent implements OnInit {
-  
+export class ResultComponent implements OnInit, AfterViewInit {
+
   fileToAnalyze: Blob;
   searchTerm: String;
   textToAnalyze: string;
 
-  model: any;
-  
+
+
   config = {
-    lang:"eng",
+    lang: "eng",
     oem: 1,
     psm: 3,
   };
-  isFinished = false;
-  tesseract = require("node-tesseract-ocr");
+  isFinished = true;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private ocrService: OCROnImageService) { }
+
+
+  ngAfterViewInit(): void {
+    const previewElement = document.getElementById("previewImg") as HTMLImageElement;
+    console.log("[DEBUG] filereader: ", document.getElementById('text-block'));
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(this.fileToAnalyze);
+    fileReader.onload = () => {
+      let result = fileReader.result;
+      console.log("[DEBUG] filereader: ", previewElement);
+      previewElement.src = result.toString();
+      let predictionResult = this.ocrService.predictOnImage(previewElement);
+    }
+  }
 
   ngOnInit(): void {
     this.fileToAnalyze = history.state.fileToAnalyze as File;
-    var promise = new Promise((resolve, reject) => {
-      this.getBuffer(resolve);
-    });
-    promise.then((data) => {
-      this.analyzeFile(data);
-    })
   }
 
-  
-  async analyzeFile(fileToAnalyze) {
-    console.log("[INFO] Start Analyzing file...")
-    try{
-      var uint8Array = new Uint8Array(fileToAnalyze);
-      const text = await this.tesseract.recognize(uint8Array, this.config);
-      console.log("Result: ", text);
-      this.textToAnalyze = text
-    }
-    catch(error){
-      console.log("[ERR]", error.message)
-    }
-    finally{
-      this.isFinished = true;
-    }
-  }
 
-  async predict_image(fileToAnalyze){
-    try{
-      const smallImg = tf.image.resizeBilinear(fileToAnalyze, [64, 64]);
-      const resized = tf.cast(smallImg, 'float32');
-      const t4d = tf.tensor4d(Array.from(resized.dataSync()), [1,64,64,3]);
-      const result = await this.model.predict(t4d).data();
-      console.log("[INFO] Model Prediction: ", result);
-      return result
-    }
-    catch(error){
-      console.log("[ERROR] During prediction: ", error.message)
-    }
-    
-  }
-  
-  async getBuffer(resolve){
+
+  async getBuffer(resolve) {
     var reader = new FileReader();
-    reader.readAsArrayBuffer(this.fileToAnalyze);  
+    reader.readAsArrayBuffer(this.fileToAnalyze);
     reader.onload = () => {
       var arrayBuffer = reader.result;
       resolve(arrayBuffer)
     }
   }
 
-async loadModel() {
-  try{
-    console.log("[INFO] Loading the tf model ...")
-    const modelURL = 'assets/selective_data_model/model.json';
-    this.model = tf.loadLayersModel(modelURL);
-    console.log("[Successfully loaded model.]")
-  }
-  catch(error){
-    console.log("[ERROR] Loading the model: ", error.message)
-  }
-}
+
 
   mark(event: Event) {
     const markValue = (event.target as HTMLInputElement).value;
