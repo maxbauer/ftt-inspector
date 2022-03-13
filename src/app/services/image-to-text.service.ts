@@ -23,7 +23,7 @@ export class ImageToTextService {
     console.log(result.data.words);
 
     await this.scheduler.terminate();
-    return result.data.text;
+    return result.data;
   }
 
 

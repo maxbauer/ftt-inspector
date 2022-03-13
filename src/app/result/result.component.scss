@@ -17,3 +17,12 @@ mark,
   border-radius: 2px;
   background-color: #584f19;
 }
+
+#preview-container {
+  position: absolute;
+}
+
+#previewImg {
+  max-width: 100%;
+  max-height: 100%;
+}
