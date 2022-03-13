@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { ElectronService } from './core/services';
 import { TranslateService } from '@ngx-translate/core';
 import { APP_CONFIG } from '../environments/environment';
+import { ElectronService } from './core/services';
+import { ImageToTextService } from './services/image-to-text.service';
 
 @Component({
   selector: 'app-root',
@@ -9,8 +10,10 @@ import { APP_CONFIG } from '../environments/environment';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+
   constructor(
     private electronService: ElectronService,
+    private imageToTextService: ImageToTextService, // used for init workers before usage
     private translate: TranslateService
   ) {
     this.translate.setDefaultLang('en');

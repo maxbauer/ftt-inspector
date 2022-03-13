@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import * as Tesseract from 'tesseract.js';
-import { createScheduler, createWorker } from 'tesseract.js';
+import { ImageToTextService } from '../services/image-to-text.service';
 import { OCROnImageService } from '../services/ocr-model-predict-on-image.service copy';
 import { PdfToImageService } from '../services/pdf-to-image.service';
 
@@ -14,32 +13,25 @@ import { PdfToImageService } from '../services/pdf-to-image.service';
 export class ResultComponent implements OnInit, AfterViewInit {
 
   fileToAnalyze: Blob;
-  searchTerm: String;
+
   textToAnalyze: string;
 
+  isFinished = false;
 
-
-  config = {
-    lang: "eng",
-    oem: 1,
-    psm: 3,
-  };
-  isFinished = true;
-
-  constructor(private router: Router, private ocrService: OCROnImageService, private convertService: PdfToImageService) { }
+  constructor(private router: Router, private ocrService: OCROnImageService, private convertService: PdfToImageService, private imageToTextService: ImageToTextService) { }
 
 
   ngAfterViewInit(): void {
-    const previewElement = document.getElementById("previewImg") as HTMLImageElement;
-    console.log("[DEBUG] filereader: ", document.getElementById('text-block'));
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(this.fileToAnalyze);
-    fileReader.onload = () => {
-      let result = fileReader.result;
-      console.log("[DEBUG] filereader: ", previewElement);
-      previewElement.src = result.toString();
-      let predictionResult = this.ocrService.predictOnImage(previewElement);
-    }
+    // const previewElement = document.getElementById("previewImg") as HTMLImageElement;
+    // console.log("[DEBUG] filereader: ", document.getElementById('text-block'));
+    // const fileReader = new FileReader();
+    // fileReader.readAsDataURL(this.fileToAnalyze);
+    // fileReader.onload = () => {
+    //   let result = fileReader.result;
+    //   console.log("[DEBUG] filereader: ", previewElement);
+    //   previewElement.src = result.toString();
+    //   let predictionResult = this.ocrService.predictOnImage(previewElement);
+    // }
   }
 
 
@@ -51,41 +43,11 @@ export class ResultComponent implements OnInit, AfterViewInit {
     if (fileToAnalyze.type === 'application/pdf') {
       this.convertService.convertPdfToImage(fileToAnalyze);
     }
-    this.analyzeImage(fileToAnalyze);
+    this.imageToTextService.convertImageToText(fileToAnalyze).then(text => {
+      this.isFinished = true;
+      this.textToAnalyze = text;
+    });
   }
-
-  async analyzeImage(file: File) {
-    const scheduler = createScheduler();
-    await this.createWorkers(1, scheduler);
-    const { data: { text } } = await scheduler.addJob('recognize', file);
-
-    this.textToAnalyze = text
-    this.isFinished = true;
-    await scheduler.terminate();
-  }
-
-
-  private async createWorkers(numberOfWorkers: number, scheduler: Tesseract.Scheduler) {
-    for (let index = 0; index < numberOfWorkers; index++) {
-      const worker = createWorker();
-      await worker.load();
-      await worker.loadLanguage('deu');
-      await worker.initialize('deu', Tesseract.OEM.LSTM_ONLY);
-      worker.setParameters({ tessedit_pageseg_mode: Tesseract.PSM.AUTO });
-      scheduler.addWorker(worker);
-    }
-  }
-
-
-  async getBuffer(resolve) {
-    var reader = new FileReader();
-    reader.readAsArrayBuffer(this.fileToAnalyze);
-    reader.onload = () => {
-      var arrayBuffer = reader.result;
-      resolve(arrayBuffer)
-    }
-  }
-
 
 
   mark(event: Event) {
