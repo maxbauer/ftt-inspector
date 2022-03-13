@@ -2,6 +2,7 @@ import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
+import { trigger } from '@angular/animations';
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1),
@@ -18,6 +19,7 @@ function createWindow(): BrowserWindow {
     y: 0,
     width: 800,
     height: 600,
+    hasShadow: true,
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,

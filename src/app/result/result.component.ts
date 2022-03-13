@@ -35,7 +35,7 @@ export class ResultComponent implements OnInit, AfterViewInit {
       let result = fileReader.result;
       console.log("[DEBUG] filereader: ", previewElement);
       previewElement.src = result.toString();
-      let predictionResult = this.ocrService.predictOnImage(previewElement);
+      //let predictionResult = this.ocrService.predictOnImage(previewElement);
     }
   }
 

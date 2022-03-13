@@ -35,9 +35,11 @@ export class OCROnImageService {
       console.log("[INFO] resized: ", resized);
       const t4d = tf.tensor4d(Array.from(resized.dataSync()), [1,64,64,3]);
       console.log("[INFO] t4d: ", t4d);
-      const result = await this.model.predict(t4d).data();
+      const result = await this.model.predict(t4d);
       console.log("[INFO] Model Prediction: ", result);
-      return result
+      console.log("[INFO] Model Prediction: ", result.toString());
+      console.log("[INFO] Model Prediction: ", result.dataSync());
+      return result.data()
     }
     catch(error){
       console.log("[ERROR] During prediction: ", error.message)
