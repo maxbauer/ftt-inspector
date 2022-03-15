@@ -16,7 +16,7 @@ export class ResultComponent implements OnInit, AfterViewInit {
 
   textToAnalyze: string;
 
-  isFinished = true;
+  isFinished = false;
 
   constructor(private router: Router, private ocrService: OCROnImageService, private convertService: PdfToImageService, private imageToTextService: ImageToTextService) { }
 
@@ -65,14 +65,16 @@ export class ResultComponent implements OnInit, AfterViewInit {
 
     words.forEach(word => {
       const wordContainer = document.createElement('div') as HTMLDivElement;
-      // wordContainer.textContent = word.text;
+      wordContainer.textContent = word.text;
       wordContainer.style.position = 'absolute';
+      wordContainer.className = 'word-container'
       const boundingBox = word.bbox;
       wordContainer.style.top = boundingBox.y0 / factor + 'px';
       wordContainer.style.left = boundingBox.x0 / factor + 'px';
       wordContainer.style.width = (boundingBox.x1 - boundingBox.x0) / factor + 'px';
       wordContainer.style.height = (boundingBox.y1 - boundingBox.y0) / factor + 'px';
       wordContainer.style.backgroundColor = 'rgba(228, 205, 78, 0.438)';
+      wordContainer.style.color = 'rgba(255, 255, 255, 0)';
 
       previewContainer.appendChild(wordContainer)
     })
@@ -94,15 +96,21 @@ export class ResultComponent implements OnInit, AfterViewInit {
     this.clearIt()
     if (markValue.length > 2) {
       let c = new RegExp(markValue, "ig")
-      const main = document.getElementById('text-block');
-      main.innerHTML = main.innerHTML.replace(c, "<mark>" + markValue + "</mark>");
+      const wordContainers = document.getElementsByClassName('word-container');
+      for (let index = 0; index < wordContainers.length; index++) {
+        const element = wordContainers.item(index);
+        element.innerHTML = element.innerHTML.replace(c, "<mark>" + markValue + "</mark>");
+      }
     }
   }
 
   clearIt() {
     let b = new RegExp("mark>", "ig");
-    const main = document.getElementById('text-block');
-    main.innerHTML = main.innerHTML.replace(b, "wbr>");
+    const wordContainers = document.getElementsByClassName('word-container');
+    for (let index = 0; index < wordContainers.length; index++) {
+      const element = wordContainers.item(index);
+      element.innerHTML = element.innerHTML.replace(b, "wbr>");
+    }
   }
 
   exportFile() {

@@ -1,6 +1,6 @@
 <div class="container">
 
-  <div *ngIf="isFinished;else showSpinner" style="height: 100%; width: 100%;">
+  <div style="height: 100%; width: 100%;">
 
 
 
@@ -29,13 +29,11 @@
 
         <div id="preview-container">
           <img id="previewImg" />
-          <div class="middle">
-            test
-          </div>
+          <mat-spinner *ngIf="!isFinished" class="loading-animation"></mat-spinner>
         </div>
-        <p id="text-block">
+        <!-- <p id="text-block">
           {{textToAnalyze}}
-        </p>
+        </p> -->
       </div>
 
       <div class="col-3" style="height: 100%;">
@@ -48,11 +46,11 @@
 
   </div>
 
-  <ng-template #showSpinner>
+  <!-- <ng-template #showSpinner>
     <h1 class="title">
       Analyzing...
     </h1>
     <mat-spinner></mat-spinner>
-  </ng-template>
+  </ng-template> -->
 
 </div>
