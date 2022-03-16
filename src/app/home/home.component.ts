@@ -25,12 +25,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.dropZone = document.getElementById('dnd-handler');
 
-    this.dropZone.addEventListener("dragover", (e) => {
+    this.dropZone.addEventListener('dragover', (e) => {
       e.stopPropagation();
       e.preventDefault();
     });
 
-    this.dropZone.addEventListener("drop", (e) => {
+    this.dropZone.addEventListener('drop', (e) => {
       e.stopPropagation();
       e.preventDefault();
 

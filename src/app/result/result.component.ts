@@ -18,7 +18,8 @@ export class ResultComponent implements OnInit, AfterViewInit {
 
   isFinished = false;
 
-  constructor(private router: Router, private ocrService: OCROnImageService, private convertService: PdfToImageService, private imageToTextService: ImageToTextService) { }
+  constructor(private router: Router, private ocrService: OCROnImageService,
+    private convertService: PdfToImageService, private imageToTextService: ImageToTextService) { }
 
 
   // ngAfterViewInit(): void {
@@ -56,18 +57,18 @@ export class ResultComponent implements OnInit, AfterViewInit {
 
   createOverlay(words: any[]) {
 
-    const previewElement = document.getElementById("previewImg") as HTMLImageElement;
+    const previewElement = document.getElementById('previewImg') as HTMLImageElement;
     const realWidth = previewElement.naturalWidth;
     const width = previewElement.width;
     const factor = realWidth / width;
 
-    const previewContainer = document.getElementById("preview-container") as HTMLDivElement;
+    const previewContainer = document.getElementById('preview-container') as HTMLDivElement;
 
     words.forEach(word => {
       const wordContainer = document.createElement('div') as HTMLDivElement;
       wordContainer.textContent = word.text;
       wordContainer.style.position = 'absolute';
-      wordContainer.className = 'word-container'
+      wordContainer.className = 'word-container';
       const boundingBox = word.bbox;
       wordContainer.style.top = boundingBox.y0 / factor + 'px';
       wordContainer.style.left = boundingBox.x0 / factor + 'px';
@@ -76,8 +77,8 @@ export class ResultComponent implements OnInit, AfterViewInit {
       wordContainer.style.backgroundColor = 'rgba(228, 205, 78, 0.438)';
       wordContainer.style.color = 'rgba(255, 255, 255, 0)';
 
-      previewContainer.appendChild(wordContainer)
-    })
+      previewContainer.appendChild(wordContainer);
+    });
   }
 
 
@@ -85,48 +86,45 @@ export class ResultComponent implements OnInit, AfterViewInit {
     const fileReader = new FileReader();
     fileReader.readAsDataURL(imageToShow);
     fileReader.onload = () => {
-      let result = fileReader.result;
-      const previewElement = document.getElementById("previewImg") as HTMLImageElement;
+      const result = fileReader.result;
+      const previewElement = document.getElementById('previewImg') as HTMLImageElement;
       previewElement.src = result.toString();
-    }
+    };
   }
 
   mark(event: Event) {
     const markValue = (event.target as HTMLInputElement).value;
-    this.clearIt()
+    this.clearIt();
     if (markValue.length > 2) {
-      let c = new RegExp(markValue, "ig")
+      const c = new RegExp(markValue, 'ig');
       const wordContainers = document.getElementsByClassName('word-container');
       for (let index = 0; index < wordContainers.length; index++) {
         const element = wordContainers.item(index);
-        element.innerHTML = element.innerHTML.replace(c, "<mark>" + markValue + "</mark>");
+        element.innerHTML = element.innerHTML.replace(c, '<mark>' + markValue + '</mark>');
       }
     }
   }
 
   clearIt() {
-    let b = new RegExp("mark>", "ig");
+    const b = new RegExp('mark>', 'ig');
     const wordContainers = document.getElementsByClassName('word-container');
     for (let index = 0; index < wordContainers.length; index++) {
       const element = wordContainers.item(index);
-      element.innerHTML = element.innerHTML.replace(b, "wbr>");
+      element.innerHTML = element.innerHTML.replace(b, 'wbr>');
     }
   }
 
   exportFile() {
-    this.saveData(this.textToAnalyze, "export.txt");
+    // this.saveData(this.textToAnalyze, 'export.txt');
+
+    const a = document.createElement('a');
+    const blob = new Blob([this.textToAnalyze], { type: 'octet/stream' });
+    const url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = 'export.txt';
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 
 
-  saveData = (function () {
-    const a = document.createElement("a");
-    return function (data, fileName) {
-      const blob = new Blob([data], { type: "octet/stream" });
-      const url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = fileName;
-      a.click();
-      window.URL.revokeObjectURL(url);
-    };
-  }());
 }

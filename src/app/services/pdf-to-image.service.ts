@@ -45,8 +45,8 @@ export class PdfToImageService {
     const reader = new FileReader();
     reader.readAsArrayBuffer(file);
     reader.onload = () => {
-      resolve(reader.result)
-    }
+      resolve(reader.result);
+    };
   }
 
 }
