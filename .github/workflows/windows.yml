@@ -52,3 +52,5 @@ jobs:
       run: npm run electron:build
     - name: See directory
       run: ls
+    - name: See release
+      run: ls release
