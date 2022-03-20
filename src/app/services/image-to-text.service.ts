@@ -16,13 +16,11 @@ export class ImageToTextService {
   }
 
 
-  public async convertImageToText(imageFile: File) {
+  public async convertImageToText(imageFile: Tesseract.ImageLike) {
     await this.workerCreationPromise;
-
     const result = await this.scheduler.addJob('recognize', imageFile);
-    console.log(result.data.words);
-
-    await this.scheduler.terminate();
+    // console.log(result.data.words);
+    // await this.scheduler.terminate(); // not sure if we need this
     return result.data;
   }
 

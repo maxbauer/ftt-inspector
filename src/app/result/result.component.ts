@@ -1,7 +1,5 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { AfterViewInit, Component } from '@angular/core';
 import { ImageToTextService } from '../services/image-to-text.service';
-import { OCROnImageService } from '../services/ocr-model-predict-on-image.service copy';
 import { PdfToImageService } from '../services/pdf-to-image.service';
 
 
@@ -10,49 +8,39 @@ import { PdfToImageService } from '../services/pdf-to-image.service';
   templateUrl: './result.component.html',
   styleUrls: ['./result.component.scss']
 })
-export class ResultComponent implements OnInit, AfterViewInit {
+export class ResultComponent implements AfterViewInit {
 
-  fileToAnalyze: Blob;
-
-  textToAnalyze: string;
+  extractedText: string;
 
   isFinished = false;
 
-  constructor(private router: Router, private ocrService: OCROnImageService,
-    private convertService: PdfToImageService, private imageToTextService: ImageToTextService) { }
-
-
-  // ngAfterViewInit(): void {
-  ngOnInit(): void {
-    // const previewElement = document.getElementById("previewImg") as HTMLImageElement;
-    // console.log("[DEBUG] filereader: ", document.getElementById('text-block'));
-    // const fileReader = new FileReader();
-    // fileReader.readAsDataURL(this.fileToAnalyze);
-    // fileReader.onload = () => {
-    //   let result = fileReader.result;
-    //   console.log("[DEBUG] filereader: ", previewElement);
-    //   previewElement.src = result.toString();
-    //   let predictionResult = this.ocrService.predictOnImage(previewElement);
-    // }
-  }
-
-
+  constructor(private convertService: PdfToImageService, private imageToTextService: ImageToTextService) { }
 
 
   ngAfterViewInit(): void {
     const fileToAnalyze = history.state.fileToAnalyze as File;
+    this.startAnalyse(fileToAnalyze);
+  }
 
+
+  async startAnalyse(fileToAnalyze: File) {
+
+    let imageToConvert;
     if (fileToAnalyze.type === 'application/pdf') {
-      this.convertService.convertPdfToImage(fileToAnalyze);
+      imageToConvert = await this.convertService.convertPdfToBase64Image(fileToAnalyze);
+    } else {
+      imageToConvert = fileToAnalyze;
     }
-    this.showPreviewImage(fileToAnalyze);
 
-    this.imageToTextService.convertImageToText(fileToAnalyze).then(data => {
-      this.isFinished = true;
-      this.textToAnalyze = data.text;
-      // this.showPreviewImage(fileToAnalyze);
-      this.createOverlay(data.words);
-    });
+    this.showPreviewImage(imageToConvert);
+
+    this.imageToTextService.convertImageToText(imageToConvert)
+      .then(data => {
+        this.isFinished = true;
+        this.extractedText = data.text;
+        this.createOverlay(data.words);
+      })
+      .catch(err => console.log(err));
   }
 
   createOverlay(words: any[]) {
@@ -82,14 +70,20 @@ export class ResultComponent implements OnInit, AfterViewInit {
   }
 
 
-  showPreviewImage(imageToShow: File) {
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(imageToShow);
-    fileReader.onload = () => {
-      const result = fileReader.result;
-      const previewElement = document.getElementById('previewImg') as HTMLImageElement;
-      previewElement.src = result.toString();
-    };
+  showPreviewImage(imageToShow: string | File) {
+    const previewElement = document.getElementById('previewImg') as HTMLImageElement;
+
+    if (imageToShow instanceof File) {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(imageToShow);
+      fileReader.onload = () => {
+        const result = fileReader.result;
+        previewElement.src = result.toString();
+      };
+    } else if (typeof imageToShow === 'string') {
+      previewElement.src = imageToShow;
+    }
+
   }
 
   mark(event: Event) {
@@ -115,10 +109,8 @@ export class ResultComponent implements OnInit, AfterViewInit {
   }
 
   exportFile() {
-    // this.saveData(this.textToAnalyze, 'export.txt');
-
     const a = document.createElement('a');
-    const blob = new Blob([this.textToAnalyze], { type: 'octet/stream' });
+    const blob = new Blob([this.extractedText], { type: 'octet/stream' });
     const url = window.URL.createObjectURL(blob);
     a.href = url;
     a.download = 'export.txt';

@@ -12,7 +12,6 @@ import { CoreModule } from './core/core.module';
 import { HomeModule } from './home/home.module';
 import { ResultModule } from './result/result.module';
 import { ImageToTextService } from './services/image-to-text.service';
-import { OCROnImageService } from './services/ocr-model-predict-on-image.service copy';
 import { PdfToImageService } from './services/pdf-to-image.service';
 import { SharedModule } from './shared/shared.module';
 
@@ -43,7 +42,6 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
   ],
   providers: [
     PdfToImageService,
-    OCROnImageService,
     ImageToTextService,
   ],
   bootstrap: [AppComponent]

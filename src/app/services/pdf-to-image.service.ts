@@ -1,45 +1,79 @@
 import { Injectable } from '@angular/core';
-import { getDocument } from 'pdfjs-dist';
+const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
+const pdfjsWorker = require('pdfjs-dist/build/pdf.worker.entry');
+
+// https://github.com/mozilla/pdf.js/blob/master/examples/node/pdf2png/pdf2png.js
 
 @Injectable({
   providedIn: 'root'
 })
 export class PdfToImageService {
 
-  constructor() { }
+  constructor() {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+  }
 
 
-  public async convertPdfToImage(imageFile: File) {
+  public async convertPdfToBase64Image(imageFile: File): Promise<string> {
 
-    const fileBuffer = new Promise((resolve, reject) => {
+    const fileBuffer = await new Promise((resolve, reject) => {
       this.fileToBuffer(imageFile, resolve);
     }) as any;
+
     const uint8Array = new Uint8Array(fileBuffer);
 
-    // try {
-    //   const pdfDocument = await getDocument(uint8Array).promise;
-    //   console.log("pages", pdfDocument.numPages);
+    try {
+      const pdfDocument = await pdfjsLib.getDocument(uint8Array).promise;
 
-    //   const page = await pdfDocument.getPage(1);
+      const pages = new Array<IRenderedPage>();
 
-    //   const viewport = page.getViewport({ scale: 1.0 });
-    //   const canvasFactory = new NodeCanvasFactory();
-    //   const canvasAndContext = canvasFactory.create(viewport.width, viewport.height);
-    //   const renderContext = {
-    //     canvasContext: canvasAndContext.context,
-    //     viewport,
-    //     canvasFactory,
-    //   };
+      for (let pageIndex = 1; pageIndex < pdfDocument.numPages + 1; pageIndex++) {
+        const page = await pdfDocument.getPage(pageIndex);
+        const viewport = page.getViewport({ scale: 1.0 });
 
-    //   const renderTask = page.render(renderContext);
-    //   await renderTask.promise;
-    //   page.cleanup();
-    //   const image = canvasAndContext.canvas.toBuffer();
-    //   return image;
-    // } catch (reason) {
-    //   console.log(reason);
-    // }
+        const canvasFactory = new nodeCanvasFactory();
+        const canvasAndContext = canvasFactory.create(
+          viewport.width,
+          viewport.height
+        );
+        const renderContext = {
+          canvasContext: canvasAndContext.context,
+          viewport,
+          canvasFactory,
+        };
+
+        const renderTask = page.render(renderContext);
+        await renderTask.promise;
+
+        const pageImageData = canvasAndContext.context.getImageData(0, 0, viewport.width, viewport.height);
+        pages.push({ imageData: pageImageData, width: viewport.width, height: viewport.height });
+
+        page.cleanup();
+      }
+
+      const resultCanvasHeight = pages.reduce((previousHeight, page) => previousHeight + page.height, 0);
+      const resultCanvasWidth = pages.reduce((previousWidth, page) => page.width > previousWidth ? page.width : previousWidth, 0);
+
+      const resultCanvas = document.createElement('canvas') as HTMLCanvasElement;
+      resultCanvas.width = resultCanvasWidth;
+      resultCanvas.height = resultCanvasHeight;
+      const resultContext = resultCanvas.getContext('2d');
+
+      let lastPageY = 0;
+      pages.forEach(page => {
+        resultContext.putImageData(page.imageData, 0, lastPageY);
+        lastPageY = page.height + 1;
+      });
+
+      const pdfAsBase64 = await resultCanvas.toDataURL('image/jpg');
+      // console.log(pdfAsBase64);
+
+      return pdfAsBase64;
+    } catch (reason) {
+      console.log(reason);
+    }
   }
+
 
   private async fileToBuffer(file: File, resolve) {
     const reader = new FileReader();
@@ -51,40 +85,36 @@ export class PdfToImageService {
 
 }
 
-// const Canvas = require("canvas");
-// const assert = require("assert").strict;
+interface IRenderedPage {
+  imageData: ImageData;
+  width: number;
+  height: number;
+}
 
 
-// function NodeCanvasFactory() { }
+function nodeCanvasFactory() { }
+nodeCanvasFactory.prototype = {
+  create: function nodeCanvasFactoryCreate(width, height): { canvas: HTMLCanvasElement; context: CanvasRenderingContext2D } {
+    const canvas = document.createElement('canvas') as HTMLCanvasElement;
+    canvas.width = width;
+    canvas.height = height;
+    return {
+      canvas,
+      context: canvas.getContext('2d'),
+    };
+  },
 
-// NodeCanvasFactory.prototype = {
-//   create: function NodeCanvasFactory_create(width, height) {
-//     assert(width > 0 && height > 0, "Invalid canvas size");
-//     const canvas = Canvas.createCanvas(width, height);
-//     const context = canvas.getContext("2d");
-//     return {
-//       canvas,
-//       context,
-//     };
-//   },
+  reset: function nodeCanvasFactoryReset(canvasAndContext, width, height) {
+    canvasAndContext.canvas.width = width;
+    canvasAndContext.canvas.height = height;
+  },
 
-//   reset: function NodeCanvasFactory_reset(canvasAndContext, width, height) {
-//     assert(canvasAndContext.canvas, "Canvas is not specified");
-//     assert(width > 0 && height > 0, "Invalid canvas size");
-//     canvasAndContext.canvas.width = width;
-//     canvasAndContext.canvas.height = height;
-//   },
-
-//   destroy: function NodeCanvasFactory_destroy(canvasAndContext) {
-//     assert(canvasAndContext.canvas, "Canvas is not specified");
-
-//     // Zeroing the width and height cause Firefox to release graphics
-//     // resources immediately, which can greatly reduce memory consumption.
-//     canvasAndContext.canvas.width = 0;
-//     canvasAndContext.canvas.height = 0;
-//     canvasAndContext.canvas = null;
-//     canvasAndContext.context = null;
-//   },
-// };
-
-
+  destroy: function nodeCanvasFactoryDestroy(canvasAndContext) {
+    // Zeroing the width and height cause Firefox to release graphics
+    // resources immediately, which can greatly reduce memory consumption.
+    canvasAndContext.canvas.width = 0;
+    canvasAndContext.canvas.height = 0;
+    canvasAndContext.canvas = null;
+    canvasAndContext.context = null;
+  },
+};
