@@ -1,5 +1,5 @@
 {
-  "name": "angular-electron",
+  "name": "ftt-inspector",
   "version": "10.5.0",
   "description": "Angular 13 with Electron 17 (Typescript + SASS + Hot Reload)",
   "homepage": "https://github.com/maximegris/angular-electron",
