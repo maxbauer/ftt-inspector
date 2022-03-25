@@ -13,7 +13,7 @@
 
 mark,
 .mark {
-  background-color: #09ab1266 !important;
+  background-color: rgba(9, 171, 18, 0.4) !important;
   color: #ffffff00;
 }
 
@@ -24,13 +24,5 @@ mark,
 #previewImg {
   max-width: 100%;
   max-height: 100%;
-}
-
-.loading-animation {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
+  width: 100%;
 }

@@ -62,7 +62,7 @@ export class ResultComponent implements AfterViewInit {
       wordContainer.style.left = boundingBox.x0 / factor + 'px';
       wordContainer.style.width = (boundingBox.x1 - boundingBox.x0) / factor + 'px';
       wordContainer.style.height = (boundingBox.y1 - boundingBox.y0) / factor + 'px';
-      wordContainer.style.backgroundColor = 'rgba(228, 205, 78, 0.438)';
+      wordContainer.style.backgroundColor = 'rgba(228, 205, 78, 0.3)';
       wordContainer.style.color = 'rgba(255, 255, 255, 0)';
 
       previewContainer.appendChild(wordContainer);
@@ -93,8 +93,11 @@ export class ResultComponent implements AfterViewInit {
       const c = new RegExp(markValue, 'ig');
       const wordContainers = document.getElementsByClassName('word-container');
       for (let index = 0; index < wordContainers.length; index++) {
-        const element = wordContainers.item(index);
-        element.innerHTML = element.innerHTML.replace(c, '<mark>' + markValue + '</mark>');
+        const element = wordContainers.item(index) as HTMLDivElement;
+        if (element.textContent.includes(markValue)) {
+          element.style.backgroundColor = 'rgba(9, 171, 18, 0.4) ';
+        }
+        // element.innerHTML = element.innerHTML.replace(c, '<mark>' + markValue + '</mark>');
       }
     }
   }
@@ -103,8 +106,9 @@ export class ResultComponent implements AfterViewInit {
     const b = new RegExp('mark>', 'ig');
     const wordContainers = document.getElementsByClassName('word-container');
     for (let index = 0; index < wordContainers.length; index++) {
-      const element = wordContainers.item(index);
-      element.innerHTML = element.innerHTML.replace(b, 'wbr>');
+      const element = wordContainers.item(index) as HTMLDivElement;
+      element.style.backgroundColor = 'rgba(228, 205, 78, 0.3)';
+      // element.innerHTML = element.innerHTML.replace(b, 'wbr>');
     }
   }
 
