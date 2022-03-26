@@ -90,25 +90,21 @@ export class ResultComponent implements AfterViewInit {
     const markValue = (event.target as HTMLInputElement).value;
     this.clearIt();
     if (markValue.length > 2) {
-      const c = new RegExp(markValue, 'ig');
       const wordContainers = document.getElementsByClassName('word-container');
       for (let index = 0; index < wordContainers.length; index++) {
         const element = wordContainers.item(index) as HTMLDivElement;
-        if (element.textContent.includes(markValue)) {
+        if (element.textContent.toLowerCase().includes(markValue.toLowerCase())) {
           element.style.backgroundColor = 'rgba(9, 171, 18, 0.4) ';
         }
-        // element.innerHTML = element.innerHTML.replace(c, '<mark>' + markValue + '</mark>');
       }
     }
   }
 
   clearIt() {
-    const b = new RegExp('mark>', 'ig');
     const wordContainers = document.getElementsByClassName('word-container');
     for (let index = 0; index < wordContainers.length; index++) {
       const element = wordContainers.item(index) as HTMLDivElement;
       element.style.backgroundColor = 'rgba(228, 205, 78, 0.3)';
-      // element.innerHTML = element.innerHTML.replace(b, 'wbr>');
     }
   }
 
