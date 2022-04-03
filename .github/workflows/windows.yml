@@ -54,17 +54,19 @@ jobs:
       run: ls
     - name: See release
       run: ls release
-    - name: Get current date
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d-%R')"
+    - name: Update release
+      uses: johnwbyrd/update-release@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: D:\a\ftt-inspector\ftt-inspector\release\angular-electron 10.5.0.exe
     - name: create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-        tag_name: ${{ steps.date.outputs.date  }}
-        release_name: Release ${{ steps.date.outputs.date  }}
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
         body: |
           Changes in this Release
           - First Change
