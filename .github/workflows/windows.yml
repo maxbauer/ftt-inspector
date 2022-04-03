@@ -58,7 +58,7 @@ jobs:
       uses: johnwbyrd/update-release@v1.0.0
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        files: D:\a\ftt-inspector\ftt-inspector\release\angular-electron 10.5.0.exe
+        files: ${{ github.workspace }}/release/angular-electron 10.5.0.exe
     - name: create Release
       id: create_release
       uses: actions/create-release@v1
