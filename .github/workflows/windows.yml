@@ -55,7 +55,7 @@ jobs:
     - name: See release
       run: ls release
     - name: Update release
-      uses: johnwbyrd/update-release@v1
+      uses: johnwbyrd/update-release@v1.0.0
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: D:\a\ftt-inspector\ftt-inspector\release\angular-electron 10.5.0.exe
