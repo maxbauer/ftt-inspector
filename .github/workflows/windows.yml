@@ -57,27 +57,14 @@ jobs:
     - name: Get current date
       id: date
       run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
-    - name: create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+    - name: Release
+      uses: sondreb/action-release@main
       with:
-        tag_name: ${{ steps.date.outputs.date  }}
-        release_name: Release ${{ steps.date.outputs.date  }}
-        body: |
-          Changes in this Release
-          - First Change
-          - Second Change
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: "D:\a\ftt-inspector\ftt-inspector\release\angular-electron 10.5.0.exe"
+        folder: "${{github.workspace}}/package/"
         draft: false
         prerelease: false
-    - name: Upload Release Asset
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: D:\a\ftt-inspector\ftt-inspector\release\angular-electron 10.5.0.exe
-        asset_name: ftt-inspector.exe
-        asset_content_type: application/exe
+        body: 'This is a pre-release'
+        name: "Draft Release"
+        tag: v0.0.1
