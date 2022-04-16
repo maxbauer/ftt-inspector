@@ -62,11 +62,10 @@ export class PdfToImageService {
       let lastPageY = 0;
       pages.forEach(page => {
         resultContext.putImageData(page.imageData, 0, lastPageY);
-        lastPageY = page.height + 1;
+        lastPageY += page.height + 1;
       });
 
       const pdfAsBase64 = await resultCanvas.toDataURL('image/jpg');
-      // console.log(pdfAsBase64);
 
       return pdfAsBase64;
     } catch (reason) {
