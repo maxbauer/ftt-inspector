@@ -9,6 +9,8 @@ export class RecognitionService {
 
   private filesToResutsMap = new Map<File, Promise<IRecognitionResult>>();
 
+  finishedFiles = new Set<File>();
+
   constructor(private pdfToImageService: PdfToImageService, private imageToTextService: ImageToTextService) { }
 
   public runRecognition(files: File[]) {
@@ -24,6 +26,7 @@ export class RecognitionService {
               rawText: conversionResult.text,
               wordsWithPosition: conversionResult.words,
             } as IRecognitionResult;
+            this.finishedFiles.add(file);
             resolve(result);
           });
         } else if (this.isPDF(file)) {
@@ -36,12 +39,17 @@ export class RecognitionService {
               rawText: conversionResult.text,
               wordsWithPosition: conversionResult.words,
             } as IRecognitionResult;
+            this.finishedFiles.add(file);
             resolve(result);
           });
         }
         this.filesToResutsMap.set(file, recognitionResultPromise);
       });
     }
+  }
+
+  public isProcessingFileFinished(file: File): boolean {
+    return this.finishedFiles.has(file);
   }
 
   public getResultForFile(file: File): Promise<IRecognitionResult> {

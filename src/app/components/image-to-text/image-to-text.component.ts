@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RecognitionService } from '../../services/recognition.service';
 
@@ -16,8 +16,7 @@ export class ImageToTextComponent implements OnChanges {
   @Input() isVisible: boolean;
 
   //TODO: sync information back to result page
-  finished = new EventEmitter<boolean>();
-  numberOfFindings = new EventEmitter<number>();
+  @Output() numberOfSearchMatches = new EventEmitter<number>();
 
   isFinished = false;
 
@@ -108,14 +107,17 @@ export class ImageToTextComponent implements OnChanges {
 
   private search(searchTerm: string): void {
     const findings = this.clearSearchResults();
-    if (searchTerm.length > 2) {
+    let numberOfSearchMatches = 0;
+    if (searchTerm && searchTerm.length > 2) {
       findings.forEach(finding => {
         const element = finding as HTMLDivElement;
         if (element.textContent.toLowerCase().includes(searchTerm.toLowerCase())) {
           element.style.backgroundColor = 'rgba(9, 171, 18, 0.4) ';
+          numberOfSearchMatches++;
         }
       });
     }
+    this.numberOfSearchMatches.emit(numberOfSearchMatches);
   }
 
   private clearSearchResults(): NodeListOf<Element> {
