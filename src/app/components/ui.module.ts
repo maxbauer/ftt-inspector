@@ -11,7 +11,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { ImageToTextComponent } from '.';
 
 @NgModule({
     imports: [
@@ -26,12 +29,16 @@ import { MatTabsModule } from '@angular/material/tabs';
         DragDropModule,
         MatListModule,
         MatTabsModule,
-        MatExpansionModule
+        MatExpansionModule,
+        MatStepperModule,
+        MatProgressBarModule,
     ],
     declarations: [
+        ImageToTextComponent,
     ],
     exports: [
         CommonModule,
+        ImageToTextComponent,
     ]
 })
 export class UiComponentsModule { }

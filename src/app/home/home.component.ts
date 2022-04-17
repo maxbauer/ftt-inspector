@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ElectronService } from '../core/services';
 
@@ -7,20 +7,15 @@ import { ElectronService } from '../core/services';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit, AfterViewInit {
+export class HomeComponent implements AfterViewInit {
 
-  selectedFile: File;
-  fileUrl: string;
-  fileName: string;
+  readonly allowedMimeTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
 
+  selectedFiles = new Array<File>();
   dropZone: HTMLElement;
 
-  constructor(private router: Router, private electronServie: ElectronService) { }
+  constructor(private router: Router) { }
 
-  ngOnInit(): void {
-    console.log('HomeComponent INIT');
-
-  }
 
   ngAfterViewInit() {
     this.dropZone = document.getElementById('dnd-handler');
@@ -34,32 +29,29 @@ export class HomeComponent implements OnInit, AfterViewInit {
       e.stopPropagation();
       e.preventDefault();
 
-      console.log(e);
       const files = e.dataTransfer.files;
       for (let i = 0; i < files.length; i++) {
         const file = files.item(i);
-        this.selectedFile = file;
-        this.fileName = file.name;
+        if (file && this.allowedMimeTypes.includes(file.type)) {
+          this.selectedFiles.push(file);
+        }
       }
     });
   }
 
-
-
   onFileSelect(event: Event) {
-    const file = (event.target as HTMLInputElement).files[0];
-    console.log(file.type);
-
-    const allowedMimeTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
-    if (file && allowedMimeTypes.includes(file.type)) {
-      this.selectedFile = file;
-      this.fileName = file.name;
+    const files = (event.target as HTMLInputElement).files;
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+      if (file && this.allowedMimeTypes.includes(file.type)) {
+        this.selectedFiles.push(file);
+      }
     }
   }
 
 
   startFTTInspector() {
-    this.router.navigate(['result'], { state: { fileToAnalyze: this.selectedFile } });
+    this.router.navigate(['result'], { state: { filesToAnalyze: this.selectedFiles } });
   }
 
 }

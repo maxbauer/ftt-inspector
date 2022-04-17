@@ -1,6 +1,5 @@
-import { AfterViewInit, Component } from '@angular/core';
-import { ImageToTextService } from '../services/image-to-text.service';
-import { PdfToImageService } from '../services/pdf-to-image.service';
+import { Component, OnInit } from '@angular/core';
+import { RecognitionService } from '../services/recognition.service';
 
 
 @Component({
@@ -8,104 +7,38 @@ import { PdfToImageService } from '../services/pdf-to-image.service';
   templateUrl: './result.component.html',
   styleUrls: ['./result.component.scss']
 })
-export class ResultComponent implements AfterViewInit {
+export class ResultComponent implements OnInit {
 
   extractedText: string;
 
-  isFinished = false;
+  filesToAnalyze: File[];
 
-  constructor(private convertService: PdfToImageService, private imageToTextService: ImageToTextService) { }
+  selectedFile: File;
 
+  textToSearch: string;
 
-  ngAfterViewInit(): void {
-    const fileToAnalyze = history.state.fileToAnalyze as File;
-    this.startAnalyse(fileToAnalyze);
-  }
+  constructor(private recognitionService: RecognitionService) { }
 
-
-  async startAnalyse(fileToAnalyze: File) {
-
-    let imageToConvert;
-    if (fileToAnalyze.type === 'application/pdf') {
-      imageToConvert = await this.convertService.convertPdfToBase64Image(fileToAnalyze);
-    } else {
-      imageToConvert = fileToAnalyze;
-    }
-
-    this.showPreviewImage(imageToConvert);
-
-    this.imageToTextService.convertImageToText(imageToConvert)
-      .then(data => {
-        this.isFinished = true;
-        this.extractedText = data.text;
-        this.createOverlay(data.words);
-      })
-      .catch(err => console.log(err));
-  }
-
-  createOverlay(words: any[]) {
-
-    const previewElement = document.getElementById('previewImg') as HTMLImageElement;
-    const realWidth = previewElement.naturalWidth;
-    const width = previewElement.width;
-    const factor = realWidth / width;
-
-    const previewContainer = document.getElementById('preview-container') as HTMLDivElement;
-
-    words.forEach(word => {
-      const wordContainer = document.createElement('div') as HTMLDivElement;
-      wordContainer.textContent = word.text;
-      wordContainer.style.position = 'absolute';
-      wordContainer.className = 'word-container';
-      const boundingBox = word.bbox;
-      wordContainer.style.top = boundingBox.y0 / factor + 'px';
-      wordContainer.style.left = boundingBox.x0 / factor + 'px';
-      wordContainer.style.width = (boundingBox.x1 - boundingBox.x0) / factor + 'px';
-      wordContainer.style.height = (boundingBox.y1 - boundingBox.y0) / factor + 'px';
-      wordContainer.style.backgroundColor = 'rgba(228, 205, 78, 0.3)';
-      wordContainer.style.color = 'rgba(255, 255, 255, 0)';
-
-      previewContainer.appendChild(wordContainer);
-    });
-  }
-
-
-  showPreviewImage(imageToShow: string | File) {
-    const previewElement = document.getElementById('previewImg') as HTMLImageElement;
-
-    if (imageToShow instanceof File) {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(imageToShow);
-      fileReader.onload = () => {
-        const result = fileReader.result;
-        previewElement.src = result.toString();
-      };
-    } else if (typeof imageToShow === 'string') {
-      previewElement.src = imageToShow;
-    }
-
-  }
-
-  mark(event: Event) {
-    const markValue = (event.target as HTMLInputElement).value;
-    this.clearIt();
-    if (markValue.length > 2) {
-      const wordContainers = document.getElementsByClassName('word-container');
-      for (let index = 0; index < wordContainers.length; index++) {
-        const element = wordContainers.item(index) as HTMLDivElement;
-        if (element.textContent.toLowerCase().includes(markValue.toLowerCase())) {
-          element.style.backgroundColor = 'rgba(9, 171, 18, 0.4) ';
-        }
-      }
+  ngOnInit(): void {
+    this.filesToAnalyze = history.state.filesToAnalyze as File[];
+    this.recognitionService.runRecognition(this.filesToAnalyze);
+    if (this.filesToAnalyze && this.filesToAnalyze.length > 0) {
+      this.selectFile(this.filesToAnalyze[0]);
     }
   }
 
-  clearIt() {
-    const wordContainers = document.getElementsByClassName('word-container');
-    for (let index = 0; index < wordContainers.length; index++) {
-      const element = wordContainers.item(index) as HTMLDivElement;
-      element.style.backgroundColor = 'rgba(228, 205, 78, 0.3)';
-    }
+
+  public selectFile(fileToSelect: File): void {
+    this.selectedFile = fileToSelect;
+  }
+
+  public isFileSelected(fileToCheck: File): boolean {
+    return this.selectedFile === fileToCheck;
+  }
+
+
+  public clearSearchTerm(): void {
+    this.textToSearch = null;
   }
 
   exportFile() {
@@ -118,5 +51,14 @@ export class ResultComponent implements AfterViewInit {
     window.URL.revokeObjectURL(url);
   }
 
+
+  public isImage(fileToCheck: File): boolean {
+    return fileToCheck.type === 'image/png' || fileToCheck.type === 'image/jpeg'
+      || fileToCheck.type === 'image/jpg' || fileToCheck.type === 'image/webp';
+  }
+
+  public isPDF(fileToCheck: File): boolean {
+    return fileToCheck.type === 'application/pdf';
+  }
 
 }

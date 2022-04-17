@@ -12,10 +12,12 @@
     </div>
     <input type="file" (change)="onFileSelect($event)" accept=".pdf|image/*">
     <div class="select-new-image-text">
-      <a>{{fileName}}</a>
+      <div *ngFor="let file of selectedFiles">
+        <a>{{file.name}}</a>
+      </div>
     </div>
   </label>
 
-  <button mat-raised-button color="primary" [disabled]="!fileName" (click)="startFTTInspector()">Start FTT Inspector</button>
+  <button mat-raised-button color="primary" [disabled]="selectedFiles.length<1" (click)="startFTTInspector()">Start FTT Inspector</button>
 
 </div>

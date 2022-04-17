@@ -13,8 +13,8 @@ import { HomeModule } from './home/home.module';
 import { ResultModule } from './result/result.module';
 import { ImageToTextService } from './services/image-to-text.service';
 import { PdfToImageService } from './services/pdf-to-image.service';
+import { RecognitionService } from './services/recognition.service';
 import { SharedModule } from './shared/shared.module';
-
 
 
 // AoT requires an exported function for factories
@@ -43,6 +43,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
   providers: [
     PdfToImageService,
     ImageToTextService,
+    RecognitionService,
   ],
   bootstrap: [AppComponent]
 })
