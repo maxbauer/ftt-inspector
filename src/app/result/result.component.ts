@@ -51,6 +51,9 @@ export class ResultComponent implements OnInit {
     window.URL.revokeObjectURL(url);
   }
 
+  public isFinished(file: File): boolean {
+    return this.recognitionService.isProcessingFileFinished(file);
+  }
 
   public isImage(fileToCheck: File): boolean {
     return fileToCheck.type === 'image/png' || fileToCheck.type === 'image/jpeg'
