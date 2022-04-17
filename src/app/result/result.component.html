@@ -2,8 +2,6 @@
 
   <div style="height: 100%; width: 100%;">
 
-
-
     <div class="row">
       <div class="col-2">
         <a routerLink="../">
@@ -15,8 +13,8 @@
       <div class="col-10">
         <mat-form-field appearance="outline" style="width:80%;">
           <mat-label>Search</mat-label>
-          <input matInput type="text" (keyup)="mark($event)">
-          <button matSuffix mat-icon-button (click)="clearIt()">
+          <input matInput type="text" [(ngModel)]="textToSearch">
+          <button matSuffix mat-icon-button (click)="clearSearchTerm()">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
@@ -25,15 +23,27 @@
 
     <div class="row">
 
-      <div class="col-9 text-block-container">
-        <mat-progress-bar *ngIf="!isFinished" mode="indeterminate"></mat-progress-bar>
-        <div id="preview-container">
-          <img id="previewImg" />
-        </div>
+      <div class="col-3">
+        <mat-list>
+          <div mat-subheader>Files</div>
+          <mat-list-item *ngFor="let file of filesToAnalyze" matTooltip="{{file.name}}" (click)="selectFile(file)">
+            <mat-icon *ngIf="isImage(file)" mat-list-icon>image</mat-icon>
+            <mat-icon *ngIf="isPDF(file)" mat-list-icon>picture_as_pdf</mat-icon>
+            <div mat-line>{{file.name}}</div>
+          </mat-list-item>
+        </mat-list>
       </div>
 
-      <div class="col-3" style="height: 100%;">
-        <button mat-raised-button (click)="exportFile()">Export</button>
+
+      <div class="col-8 text-block-container">
+        <app-image-to-text-component *ngFor="let file of filesToAnalyze" [hidden]="!isFileSelected(file)" [file]="file" [searchTerm]="textToSearch" [isVisible]="isFileSelected(file)"></app-image-to-text-component>
+      </div>
+
+      <div class="col-1">
+        <button mat-raised-button (click)="exportFile()">
+          <!-- <mat-icon>text_snippet</mat-icon> -->
+          Export
+        </button>
       </div>
 
     </div>
@@ -41,7 +51,6 @@
 
 
   </div>
-
   <!-- <ng-template #showSpinner>
     <h1 class="title">
       Analyzing...
