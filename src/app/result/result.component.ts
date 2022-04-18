@@ -41,15 +41,18 @@ export class ResultComponent implements OnInit {
     this.textToSearch = null;
   }
 
-  exportFile() {
-    const a = document.createElement('a');
-    const blob = new Blob([this.extractedText], { type: 'octet/stream' });
-    const url = window.URL.createObjectURL(blob);
-    a.href = url;
-    a.download = 'export.txt';
-    a.click();
-    window.URL.revokeObjectURL(url);
+  public exportRawText(): void {
+    this.recognitionService.getResultForFile(this.selectedFile).then(result => {
+      const a = document.createElement('a');
+      const blob = new Blob([result.rawText], { type: 'octet/stream' });
+      const url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = 'export.txt';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
   }
+
 
   public isFinished(file: File): boolean {
     return this.recognitionService.isProcessingFileFinished(file);
