@@ -9,16 +9,15 @@ import { RecognitionService } from '../../services/recognition.service';
 })
 export class ImageToTextComponent implements OnChanges {
 
-  componentID: string;
-
   @Input() file: File;
   @Input() searchTerm: string;
   @Input() isVisible: boolean;
 
-  //TODO: sync information back to result page
-  @Output() numberOfSearchMatches = new EventEmitter<number>();
+  public componentID: string;
+  public isFinished = false;
 
-  isFinished = false;
+  //TODO: sync information back to result page
+  // @Output() numberOfSearchMatches = new EventEmitter<number>();
 
 
   constructor(public dialog: MatDialog, private recognitionService: RecognitionService) {
@@ -117,7 +116,7 @@ export class ImageToTextComponent implements OnChanges {
         }
       });
     }
-    this.numberOfSearchMatches.emit(numberOfSearchMatches);
+    // this.numberOfSearchMatches.emit(numberOfSearchMatches);
   }
 
   private clearSearchResults(): NodeListOf<Element> {

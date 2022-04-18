@@ -9,7 +9,7 @@ export class RecognitionService {
 
   private filesToResutsMap = new Map<File, Promise<IRecognitionResult>>();
 
-  finishedFiles = new Set<File>();
+  private finishedFiles = new Set<File>(); // temp necessary, because we cannot get the status of the promie yet
 
   constructor(private pdfToImageService: PdfToImageService, private imageToTextService: ImageToTextService) { }
 
