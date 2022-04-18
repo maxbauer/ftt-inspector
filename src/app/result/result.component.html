@@ -30,7 +30,7 @@
             <mat-icon *ngIf="isImage(file)" mat-list-icon>image</mat-icon>
             <mat-icon *ngIf="isPDF(file)" mat-list-icon>picture_as_pdf</mat-icon>
             <div mat-line>{{file.name}}</div>
-            <div mat-line>
+            <div mat-line *ngIf="!isFinished(file)">
               <mat-progress-bar *ngIf="!isFinished(file)" mode="indeterminate"></mat-progress-bar>
             </div>
           </mat-list-item>
@@ -43,9 +43,10 @@
       </div>
 
       <div class="col-1">
-        <button mat-raised-button (click)="exportFile()">
-          <!-- <mat-icon>text_snippet</mat-icon> -->
-          Export
+        <button mat-raised-button (click)="exportRawText()" [disabled]="!isFinished(selectedFile)">
+          <mat-icon>description</mat-icon>
+          Export raw text of
+          '{{selectedFile.name}}'
         </button>
       </div>
 
