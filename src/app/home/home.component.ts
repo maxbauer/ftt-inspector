@@ -29,9 +29,8 @@ export class HomeComponent implements AfterViewInit {
       e.stopPropagation();
       e.preventDefault();
 
-      const files = e.dataTransfer.files;
-      for (let i = 0; i < files.length; i++) {
-        const file = files.item(i);
+      const files = Array.from(e.dataTransfer.files);
+      for (const file of files) {
         if (file && this.allowedMimeTypes.includes(file.type)) {
           this.selectedFiles.push(file);
         }
@@ -40,9 +39,8 @@ export class HomeComponent implements AfterViewInit {
   }
 
   onFileSelect(event: Event) {
-    const files = (event.target as HTMLInputElement).files;
-    for (let index = 0; index < files.length; index++) {
-      const file = files[index];
+    const files = Array.from((event.target as HTMLInputElement).files);
+    for (const file of files) {
       if (file && this.allowedMimeTypes.includes(file.type)) {
         this.selectedFiles.push(file);
       }
