@@ -10,10 +10,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { HomeModule } from './home/home.module';
+import { InfoModule } from './info/info.module';
 import { ResultModule } from './result/result.module';
 import { ImageToTextService } from './services/image-to-text.service';
 import { PdfToImageService } from './services/pdf-to-image.service';
 import { RecognitionService } from './services/recognition.service';
+import { UtilityService } from './services/utility.service';
 import { SharedModule } from './shared/shared.module';
 
 
@@ -28,8 +30,6 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     HttpClientModule,
     CoreModule,
     SharedModule,
-    HomeModule,
-    ResultModule,
     AppRoutingModule,
     TranslateModule.forRoot({
       loader: {
@@ -38,9 +38,14 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         deps: [HttpClient]
       }
     }),
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    // Pages
+    HomeModule,
+    ResultModule,
+    InfoModule,
   ],
   providers: [
+    UtilityService,
     PdfToImageService,
     ImageToTextService,
     RecognitionService,

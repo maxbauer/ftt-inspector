@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RecognitionService } from '../services/recognition.service';
+import { UtilityService } from '../services/utility.service';
 
 
 @Component({
@@ -17,7 +18,7 @@ export class ResultComponent implements OnInit {
 
   textToSearch: string;
 
-  constructor(private recognitionService: RecognitionService) { }
+  constructor(private recognitionService: RecognitionService, public utilityService: UtilityService) { }
 
   ngOnInit(): void {
     this.filesToAnalyze = history.state.filesToAnalyze as File[];
@@ -58,13 +59,6 @@ export class ResultComponent implements OnInit {
     return this.recognitionService.isProcessingFileFinished(file);
   }
 
-  public isImage(fileToCheck: File): boolean {
-    return fileToCheck.type === 'image/png' || fileToCheck.type === 'image/jpeg'
-      || fileToCheck.type === 'image/jpg' || fileToCheck.type === 'image/webp';
-  }
 
-  public isPDF(fileToCheck: File): boolean {
-    return fileToCheck.type === 'application/pdf';
-  }
 
 }

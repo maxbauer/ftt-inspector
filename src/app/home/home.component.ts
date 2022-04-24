@@ -1,6 +1,6 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ElectronService } from '../core/services';
+import { UtilityService } from '../services/utility.service';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +14,7 @@ export class HomeComponent implements AfterViewInit {
   selectedFiles = new Array<File>();
   dropZone: HTMLElement;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, public utilityService: UtilityService) { }
 
 
   ngAfterViewInit() {
@@ -45,6 +45,16 @@ export class HomeComponent implements AfterViewInit {
         this.selectedFiles.push(file);
       }
     }
+  }
+
+  public triggerUpload(): void {
+    const fileInput = document.getElementById('upload-input') as HTMLInputElement;
+    fileInput.click();
+  }
+
+  public removeSelectedFile(fileIndex: number): void {
+    this.selectedFiles.splice(fileIndex, 1);
+
   }
 
 
