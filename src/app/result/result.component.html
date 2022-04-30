@@ -3,7 +3,7 @@
     <mat-icon>arrow_back</mat-icon>
   </button>
   <span class="toolbar-spacer"></span>
-  <span>Results</span>
+  <span>Ergebnisse</span>
   <span class="toolbar-spacer"></span>
   <button mat-icon-button routerLink="../info">
     <mat-icon>info</mat-icon>
@@ -19,7 +19,7 @@
 
       <div class="col-12">
         <mat-form-field appearance="outline" style="width:100%;">
-          <mat-label>Search</mat-label>
+          <mat-label>Suche</mat-label>
           <input matInput type="text" [(ngModel)]="textToSearch">
           <button matSuffix mat-icon-button (click)="clearSearchTerm()">
             <mat-icon>close</mat-icon>
@@ -32,7 +32,7 @@
 
       <div class="col-3">
         <mat-list>
-          <div mat-subheader>Files</div>
+          <div mat-subheader>Dateien</div>
           <mat-list-item *ngFor="let file of filesToAnalyze" matTooltip="{{file.name}}" (click)="selectFile(file)">
             <mat-icon *ngIf="utilityService.isImage(file)" mat-list-icon class="image-icon">image</mat-icon>
             <mat-icon *ngIf="utilityService.isPDF(file)" mat-list-icon class="pdf-icon">picture_as_pdf</mat-icon>
@@ -52,7 +52,7 @@
       <div class="col-1">
         <button mat-raised-button (click)="exportRawText()" [disabled]="!isFinished(selectedFile)" *ngIf="selectedFile">
           <mat-icon>description</mat-icon>
-          Export raw text of
+          Text exportieren
           '{{selectedFile.name}}'
         </button>
       </div>

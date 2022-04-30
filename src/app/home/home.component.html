@@ -9,8 +9,8 @@
 <div class="container">
 
   <section class="jumbotron">
-    <h1>File-To-Text</h1>
-    <p>With File-To-Text you can easily extract the text from different file types, such as images, pdfs or mp3 files. The FTT uses modern technologies like OCR and AI to extract this data fast and reliable.</p>
+    <h1>Datei zu Text</h1>
+    <p>Mit File-To-Text können Sie ganz einfach den Text aus verschiedenen Dateitypen extrahieren, wie z.B. Bildern oder PDF Dateien. FTT nutzt moderne Technologien wie OCR und KI, um den Text der Datein schnell und zuverlässig zu extrahieren.</p>
   </section>
 
 
@@ -23,22 +23,22 @@
           <div class="select-new-image-text">
             Drag and Drop files to upload
             <br>
-            or
+            oder
             <br>
             <button mat-raised-button class="upload-button" (click)="triggerUpload()">
-              Browse files
+              Dateien durchsuchen
             </button>
             <br>
-            <span class="data-privacy-hint">Supported files: .pdf, .jpg, .jpeg, .png, .webp</span>
+            <span class="data-privacy-hint">Unterstützte Dateitypen: .pdf, .jpg, .jpeg, .png, .webp</span>
           </div>
         </div>
       </label>
     </div>
     <div class="col-5">
-      <h4>Selected files</h4>
+      <h4>Ausgewählte Dateien</h4>
       <mat-list>
         <mat-list-item *ngIf="!selectedFiles || selectedFiles.length===0">
-          <div mat-line>No files selected so far</div>
+          <div mat-line>Bisher wurden noch keine Dateien ausgewählt</div>
         </mat-list-item>
         <mat-list-item *ngFor="let file of selectedFiles;  let i = index;">
           <mat-icon *ngIf="utilityService.isImage(file)" mat-list-icon class="image-icon">image</mat-icon>
@@ -52,13 +52,13 @@
     </div>
     <div class="col-2">
       <button mat-raised-button color="primary" [disabled]="selectedFiles.length<1" (click)="startFTTInspector()" class="start-button">
-        Start  <mat-icon>chevron_right</mat-icon>
+        Start <mat-icon>chevron_right</mat-icon>
       </button>
     </div>
   </div>
 
   <section>
-    <span *ngIf="!utilityService.isElectron()" class="data-privacy-hint">We don't store any of your files on our servers</span>
+    <span *ngIf="!utilityService.isElectron()" class="data-privacy-hint">Wir übertragen und speichern keine Ihrer Dateien auf unseren Servern.</span>
 
   </section>
 
