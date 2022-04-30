@@ -18,12 +18,13 @@
     <div class="col-5">
       <label id="dnd-handler">
         <div>
-          <img class="mb-4" src="../../assets/images/google-font-icons/upload.svg">
+          <!-- <img class="mb-4" src="../../assets/images/google-font-icons/upload.svg"> -->
+          <mat-icon class="mb-4">save_alt</mat-icon>
           <input type="file" (change)="onFileSelect($event)" accept=".pdf|image/*" id="upload-input">
           <div class="select-new-image-text">
-            Drag and Drop files to upload
+            Wähle Dateien per Drag & Drop aus
             <br>
-            oder
+            <span class="data-privacy-hint">oder</span>
             <br>
             <button mat-raised-button class="upload-button" (click)="triggerUpload()">
               Dateien durchsuchen
@@ -38,7 +39,7 @@
       <h4>Ausgewählte Dateien</h4>
       <mat-list>
         <mat-list-item *ngIf="!selectedFiles || selectedFiles.length===0">
-          <div mat-line>Bisher wurden noch keine Dateien ausgewählt</div>
+          <div mat-line class="data-privacy-hint">Bisher wurden noch keine Dateien ausgewählt</div>
         </mat-list-item>
         <mat-list-item *ngFor="let file of selectedFiles;  let i = index;">
           <mat-icon *ngIf="utilityService.isImage(file)" mat-list-icon class="image-icon">image</mat-icon>
@@ -58,7 +59,7 @@
   </div>
 
   <section>
-    <span *ngIf="!utilityService.isElectron()" class="data-privacy-hint">Wir übertragen und speichern keine Ihrer Dateien auf unseren Servern.</span>
+    <span *ngIf="!utilityService.isElectron()" class="data-privacy-hint">Wir übertragen keine ihrer ausgewählten Dateien an unsere Server. Die Berechnungen werden bei Ihnen lokal durchgeführt.</span>
 
   </section>
 
