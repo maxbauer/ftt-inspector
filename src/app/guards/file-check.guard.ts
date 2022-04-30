@@ -10,10 +10,10 @@ export class FileCheckGuard implements CanActivate {
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        console.log(history)
-        console.log(history.length)
-        console.log(history.state)
-        console.log(window.history.state)
+        // console.log(history);
+        // console.log(history.length);
+        // console.log(history.state);
+        // console.log(window.history.state);
 
         return true;
 
