@@ -18,17 +18,18 @@ export class HomeComponent implements AfterViewInit {
 
 
   ngAfterViewInit() {
-    this.dropZone = document.getElementById('dnd-handler');
+    this.dropZone = document.getElementById('dnd-handler') as HTMLLabelElement;
 
     this.dropZone.addEventListener('dragover', (e) => {
       e.stopPropagation();
       e.preventDefault();
+      this.dropZone.classList.add("drag");
     });
 
     this.dropZone.addEventListener('drop', (e) => {
       e.stopPropagation();
       e.preventDefault();
-
+      this.dropZone.classList.remove("drag");
       const files = Array.from(e.dataTransfer.files);
       for (const file of files) {
         if (file && this.allowedMimeTypes.includes(file.type)) {
